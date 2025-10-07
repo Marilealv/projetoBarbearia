@@ -8,9 +8,9 @@ import { CalendarIcon, HomeIcon, LogInIcon, LogOutIcon, UserIcon } from "lucide-
 import { useSession, signOut, signIn } from "next-auth/react";
 
 const SideMenu = () => {
-    const {data, status} = useSession();
+    const {data} = useSession();
 
-    const handleLogoutClick = () => signOut(); 
+    const handleLogoutClick = () => signOut({ callbackUrl: "/" }); 
 
     const handleLoginClick = () => signIn("google");
 
@@ -30,8 +30,8 @@ const SideMenu = () => {
                                 <h2 className="font-bold">{data.user.name}</h2>
                             </div>
                             
-                        <Button variant="secondary" size="icon">
-                            <LogOutIcon onClick={handleLogoutClick} />
+                        <Button variant="secondary" size="icon" onClick={handleLogoutClick}>
+                            <LogOutIcon  />
                         </Button>
                         </div>
                     ) : (

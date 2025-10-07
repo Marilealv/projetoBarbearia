@@ -4,28 +4,28 @@ import ServiceItem from "./_components/service-item";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/_lib/auth";
 
-
 interface BarbershopDetailsPageProps {
-    params: {
-        id?: string;
-    };
+  params: Promise<{ id: string }>;
 }
 
 const BarbershopDetailsPage = async ({params}: BarbershopDetailsPageProps) => {
     const session = await getServerSession(authOptions);
+  const id = (await params).id;
 
-    if(!params.id) {
+    if(!id) {
         return null;
     }
 
     const barbershop = await db.barbershop.findUnique({
         where: {
-            id: params.id,
+            id,
         },
         include: {
             services: true,
         },
     });
+
+   
 
     if(!barbershop) {
         return null;

@@ -3,7 +3,7 @@
 import { Button } from "@/app/components/ui/button";
 import { Card, CardContent } from "@/app/components/ui/card";
 import { Sheet, SheetContent, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from "@/app/components/ui/sheet";
-import { Barbershop, Booking, Service } from "@prisma/client";
+import {  Booking, Prisma, Service } from "@prisma/client";
 import { signIn, useSession } from "next-auth/react";
 import Image from "next/image";
 import { Calendar } from "@/app/components/ui/calendar";
@@ -19,7 +19,7 @@ import { getDayBookings } from "../_actions/get-day-bookings";
 
 
 interface ServiceItemProps {
-    barbershop: Barbershop;
+    barbershop: Prisma.BarbershopGetPayload<{include: {services: true}}>;
     service: Service
     isAuthenticated?: boolean
 }
@@ -71,6 +71,7 @@ const ServiceItem = ({service, barbershop, isAuthenticated}: ServiceItemProps) =
             const dateMinutes = Number(hour.split(":")[1])
 
             const newDate = setMinutes(setHours(date, dateHour), dateMinutes);
+console.log(data.user);
 
             await saveBooking({
                 serviceId: service.id,

@@ -12,16 +12,25 @@ export const authOptions: AuthOptions = {
       clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
     }),
   ],
+   session: {
+    strategy: "jwt",
+    maxAge: 60 * 60, // 3600 segundos = 1 hora
+  },
   callbacks: {
+  jwt({ token, account, user }) {
+      if (account) {
+        token.accessToken = account.access_token;
+        token.id = user?.id;
+        if ("user" in user) {
+          token.user = user.user;
+        }
+      }
 
-    async session({ session, token }) {
-     // session.user = { ...session.user, id: user.id } as {
-      //  id: string;
-       // name: string;
-       /// email: string;
-      //};
-      session.user.id = token.id as string;
-
+      return token;
+    },
+    session({ session, token }) {
+      session.user.id = String(token.id);
+      session.user.user = String(token.user ?? "");
       return session;
     },
   },
