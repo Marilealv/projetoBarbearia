@@ -10,7 +10,7 @@ import { Calendar } from "@/app/components/ui/calendar";
 import { useEffect, useMemo, useState } from "react";
 import { ptBR } from "date-fns/locale/pt-BR";
 import { generateDayTimeList } from "../_helpers/hours";
-import { format, setHours, setMinutes } from "date-fns";
+import { addDays, format, setHours, setMinutes } from "date-fns";
 import { saveBooking } from "../_actions/save-booking";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
@@ -96,30 +96,27 @@ console.log(data.user);
         }
     };
 
-    const timeList = useMemo (() => {
-        if(!date){
-            return [];
-        }
+    const timeList = useMemo(() => {
+        if (!date) return [];
 
         return generateDayTimeList(date).filter(time => {
+            const [timeHour, timeMinutes] = time.split(":").map(Number);
+            const now = new Date();
 
-            const timeHour = Number(time.split(":")[0]);
-            const timeMinutes = Number(time.split(":")[1]);
+        const slotDate = setMinutes(setHours(date, timeHour), timeMinutes);
 
-            const booking = dayBookings.find(booking => {
-                const bookingHour = booking.date.getHours();
-                const bookingMinutes = booking.date.getMinutes();
+        if (slotDate < now) return false;
 
-                return bookingHour === timeHour && bookingMinutes === timeMinutes;
-            });
+        const booking = dayBookings.find(booking => {
+            const bookingHour = booking.date.getHours();
+            const bookingMinutes = booking.date.getMinutes();
+            return bookingHour === timeHour && bookingMinutes === timeMinutes;
+        });
 
-            if(!booking){
-                return true;
-            }
-
-            return false;
-        })
+        return !booking;
+        });
     }, [date, dayBookings]);
+
     
     return ( 
         <Card>
@@ -159,14 +156,14 @@ console.log(data.user);
                                         <SheetTitle>Fazer Reserva</SheetTitle>
                                     </SheetHeader>
 
-                                    <div className="py-6">
+                                    <div className="w-full">
                                     <Calendar
                                         mode="single"
                                         selected={date}
                                         onSelect={handleDateClick}
                                         locale={ptBR}
-                                        className="mt-6"
-                                        fromDate={new Date()}
+                                        className="w-full [&_.rdp-table]:w-full [&_.rdp-cell]:w-10 mt-0"
+                                        fromDate={addDays(new Date(), 1)}
                                         styles={{
                                             head_cell:{
                                                 width: "100%",
@@ -211,7 +208,7 @@ console.log(data.user);
                                             <CardContent className="p-3 gap-3 flex flex-col">
                                                 <div className="flex justfy-between">
                                                     <h2 className="font-bold">{service.name}</h2>
-                                                    <h3 className="font-bold text-sm">
+                                                    <h3 className="font-bold text-sm ml-2">
                                                         {Intl.NumberFormat("pt-BR",{ 
                                                         style: "currency",
                                                         currency: "BRL"

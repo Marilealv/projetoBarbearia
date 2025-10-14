@@ -42,7 +42,7 @@ const SideMenu = () => {
                             </div>
                             <Button variant="secondary" className="w-full justify-start" onClick={handleLoginClick}>
                                 <LogInIcon className="mr-2" size={18}/>
-                                Fezer Login
+                                Fazer Login
                             </Button>
                         </div>
                     )}
