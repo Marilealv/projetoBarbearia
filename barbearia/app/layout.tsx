@@ -21,7 +21,9 @@ export default function RootLayout({
     <html lang="pt-BR" suppressHydrationWarning className='dark'>
       <body suppressHydrationWarning className={inter.className}>
         <AuthProvider>
-        {children}
+          <div className='flex-1'>
+            {children}
+          </div>
         <Toaster />
         <Footer />
         </AuthProvider>
